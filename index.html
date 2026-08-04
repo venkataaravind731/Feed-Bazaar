@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed Bazaar - Admin Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo-title">
+      <div class="logo-wrapper">
+        <img src="fb-logo.jpg" alt="Feed Bazaar Logo" class="brand-logo-img">
+      </div>
+    </div>
+    
+    <div class="auth-buttons">
+      <div id="loggedInNav" style="display: none;">
+        <span class="host-badge">⚡ HOST ACTIVE</span>
+        <button class="btn btn-logout" onclick="handleLogout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with Centered Host Login -->
+  <section class="hero-section" id="heroSection">
+    <div class="hero-overlay"></div>
+    <div class="centered-login-card" id="centerAuthCard">
+      <div class="login-header">
+        <span class="login-icon">🔐</span>
+        <h2>Host Portal Login</h2>
+        <p>Enter your official host credentials to access inventory and sales dashboard</p>
+      </div>
+      <form id="hostLoginForm">
+        <div class="form-group">
+          <label for="hostMobile">Host Mobile ID</label>
+          <input type="tel" id="hostMobile" placeholder="Enter Host Mobile Number" required>
+        </div>
+        <div class="form-group">
+          <label for="hostPassword">Password</label>
+          <input type="password" id="hostPassword" placeholder="Enter Password" required>
+        </div>
+        <button type="submit" class="btn btn-login-submit btn-block">Login as Host</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Main Container (Unveiled Post-Login) -->
+  <main class="main-container" id="mainDashboard" style="display: none;">
+    <!-- Visual Indicator Banner for Host -->
+    <div id="hostDashboardBanner" class="host-banner">
+      <h2>👑 Host Management Portal Active</h2>
+      <p>Click on any of the feed cards below to manage inventory stock or inspect buyer details.</p>
+    </div>
+
+    <section class="products-section">
+      <h2 class="section-title" id="gridTitle">Select a Cattle Feed Bag to View Details</h2>
+      
+      <div class="product-grid">
+        <!-- 24% Bag -->
+        <div class="product-card card-24" onclick="handleBagClick('24%')">
+          <div class="card-badge bg-green">24% Protein</div>
+          <div class="image-wrapper">
+            <img src="Fb-24%.jpg" alt="FB-24% Premium Cattle Feed" class="bag-img">
+          </div>
+          <h3>FB-24%</h3>
+          <p class="bag-subtitle">High Performance Cattle Feed Formula</p>
+          <div class="card-footer-hint">Click for Stock & Sales Data ➔</div>
+        </div>
+
+        <!-- 22% Bag -->
+        <div class="product-card card-22" onclick="handleBagClick('22%')">
+          <div class="card-badge bg-blue">22% Protein</div>
+          <div class="image-wrapper">
+            <img src="fb-22%.jpeg" alt="FB-22% Balanced Cattle Feed" class="bag-img">
+          </div>
+          <h3>FB-22%</h3>
+          <p class="bag-subtitle">Balanced Daily Growth & Yield Formula</p>
+          <div class="card-footer-hint">Click for Stock & Sales Data ➔</div>
+        </div>
+
+        <!-- 20% Bag -->
+        <div class="product-card card-20" onclick="handleBagClick('20%')">
+          <div class="card-badge bg-red">20% Protein</div>
+          <div class="image-wrapper">
+            <img src="fb-22%.jpeg" alt="FB-20% Standard Cattle Feed" class="bag-img img-red-tint">
+          </div>
+          <h3>FB-20%</h3>
+          <p class="bag-subtitle">Standard Essential Maintenance Feed</p>
+          <div class="card-footer-hint">Click for Stock & Sales Data ➔</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BAG DETAILS / HOST CONTROL MODAL -->
+  <div id="bagModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('bagModal')">&times;</span>
+      <h2 id="modalBagTitle">FB-24% Details</h2>
+
+      <div class="bag-info-box">
+        <p><strong>Price:</strong> <span id="modalBagPrice">₹1,750</span></p>
+        <p><strong>Current Stock:</strong> <span id="modalBagStock">0 bags</span></p>
+      </div>
+
+      <!-- EXCLUSIVE HOST MANAGEMENT CONTROLS -->
+      <div id="hostControls" class="admin-panel">
+        <h3>Host Controls</h3>
+        
+        <!-- Stock Management -->
+        <div class="host-section">
+          <h4>Stock Inventory Controls</h4>
+          <div class="inline-form">
+            <input type="number" id="newStockInput" min="1" placeholder="Number of new bags arrived">
+            <button type="button" class="btn btn-primary btn-sm" onclick="updateStockByHost()">Add Stock</button>
+            <button type="button" class="btn btn-delete btn-sm" onclick="clearStockByHost()">Reset Stock</button>
+          </div>
+        </div>
+
+        <!-- Record Sale -->
+        <div class="host-section" style="margin-top: 15px;">
+          <h4>Record Customer Purchase</h4>
+          <form id="saleForm">
+            <input type="text" id="custName" placeholder="Customer Name" required>
+            <input type="tel" id="custMobile" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+            <input type="text" id="custVillage" placeholder="Village" required>
+            <input type="number" id="custQty" min="1" value="1" placeholder="Quantity" required>
+            <button type="submit" class="btn btn-submit-sale btn-primary btn-block">Deduct & Save Sale</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Buyer History Table -->
+      <div id="buyersSection" class="buyers-list-section">
+        <div class="history-header">
+          <h3>Customer Buyers History</h3>
+        </div>
+        
+        <div class="buyers-table-container" id="buyersTableContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Mobile Number</th>
+                <th>Village</th>
+                <th>Bags Bought</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="modalBuyersList">
+              <!-- Dynamic Content -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
